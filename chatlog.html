@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Room</title>
+    <title>Chat Log</title>
 </head>
 <body>
-    <h1>Text Room</h1>
-    
     <div id="chatLog"></div>
 
     <form id="messageForm">
@@ -16,46 +14,40 @@
     </form>
 
     <script>
-        // Load existing messages from localStorage
-        let messages = JSON.parse(localStorage.getItem('chatMessages')) || [];
+        const socket = new WebSocket('ws://localhost:3000');
 
-        // Function to add a message to the chat log
-        function addMessage(sender, message) {
-            const chatLog = document.getElementById('chatLog');
-            const messageElement = document.createElement('div');
-            messageElement.textContent = `[${sender}] ${message}`;
-            chatLog.appendChild(messageElement);
-            // Scroll to the bottom of the chat log
-            chatLog.scrollTop = chatLog.scrollHeight;
-        }
+        socket.addEventListener('message', function(event) {
+            const data = JSON.parse(event.data);
+            addMessage(data.sender, data.message);
+        });
 
-        // Function to save a message to localStorage
-        function saveMessage(sender, message) {
-            messages.push({ sender: sender, message: message });
-            localStorage.setItem('chatMessages', JSON.stringify(messages));
-        }
-
-        // Function to handle form submission
         document.getElementById('messageForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent form submission
+            event.preventDefault();
             const messageInput = document.getElementById('messageInput');
-            const message = messageInput.value.trim(); // Trim whitespace
+            const message = messageInput.value.trim();
             if (message !== '') {
-                addMessage('You', message);
-                saveMessage('You', message);
-                messageInput.value = ''; // Clear input field
+                sendMessage('You', message);
+                messageInput.value = '';
             }
         });
 
-        // Function to load existing messages
-        function loadMessages() {
-            messages.forEach(message => {
-                addMessage(message.sender, message.message);
-            });
+        function sendMessage(sender, message) {
+            const data = { sender, message };
+            socket.send(JSON.stringify(data));
+            addMessage(sender, message);
         }
 
-        // Load existing messages when the page loads
-        window.onload = loadMessages;
+        function addMessage(sender, message) {
+            const chatLog = document.getElementById('chatLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const messageElement = document.createElement('div');
+            messageElement.innerHTML = `
+                <span><strong>${sender}:</strong> ${message} <em>${timestamp}</em></span>
+            `;
+            chatLog.appendChild(messageElement);
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
     </script>
 </body>
 </html>
+
