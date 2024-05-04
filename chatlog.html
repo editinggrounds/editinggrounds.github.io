@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Log</title>
+    <style>
+        /* CSS styles for the chat log */
+        #chatLog {
+            width: 300px;
+            height: 200px;
+            overflow-y: scroll; /* Enable vertical scrolling */
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .message {
+            margin-bottom: 5px;
+        }
+
+        .sender {
+            font-weight: bold;
+            color: blue;
+        }
+
+        .timestamp {
+            font-size: 0.8em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div id="chatLog"></div>
+
+    <form id="messageForm">
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <button type="submit">Send</button>
+    </form>
+
+    <script>
+        document.getElementById('messageForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim(); // Trim whitespace
+            if (message !== '') {
+                addMessage('You', message);
+                saveMessage('You', message);
+                messageInput.value = ''; // Clear input field
+            }
+        });
+
+        function addMessage(sender, message) {
+            const chatLog = document.getElementById('chatLog');
+            const timestamp = new Date().toLocaleTimeString(); // Get current time
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.innerHTML = `
+                <span class="sender">${sender}:</span>
+                <span>${message}</span>
+                <span class="timestamp">${timestamp}</span>
+            `;
+            chatLog.appendChild(messageElement);
+            // Scroll to the bottom of the chat log
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+
+        function saveMessage(sender, message) {
+            let storedMessages = JSON.parse(localStorage.getItem('chatMessages')) || [];
+            storedMessages.push({ sender: sender, message: message });
+            localStorage.setItem('chatMessages', JSON.stringify(storedMessages));
+        }
+
+        function loadMessages() {
+            let storedMessages = JSON.parse(localStorage.getItem('chatMessages')) || [];
+            storedMessages.forEach(message => {
+                addMessage(message.sender, message.message);
+            });
+        }
+
+        // Load messages when the page loads
+        window.onload = loadMessages;
+    </script>
+</body>
+</html>
