@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Room</title>
+</head>
+<body>
+    <h1>Text Room</h1>
+    
+    <div id="chatLog"></div>
+
+    <form id="messageForm">
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <button type="submit">Send</button>
+    </form>
+
+    <script>
+        // Load existing messages from localStorage
+        let messages = JSON.parse(localStorage.getItem('chatMessages')) || [];
+
+        // Function to add a message to the chat log
+        function addMessage(sender, message) {
+            const chatLog = document.getElementById('chatLog');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = `[${sender}] ${message}`;
+            chatLog.appendChild(messageElement);
+            // Scroll to the bottom of the chat log
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+
+        // Function to save a message to localStorage
+        function saveMessage(sender, message) {
+            messages.push({ sender: sender, message: message });
+            localStorage.setItem('chatMessages', JSON.stringify(messages));
+        }
+
+        // Function to handle form submission
+        document.getElementById('messageForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim(); // Trim whitespace
+            if (message !== '') {
+                addMessage('You', message);
+                saveMessage('You', message);
+                messageInput.value = ''; // Clear input field
+            }
+        });
+
+        // Function to load existing messages
+        function loadMessages() {
+            messages.forEach(message => {
+                addMessage(message.sender, message.message);
+            });
+        }
+
+        // Load existing messages when the page loads
+        window.onload = loadMessages;
+    </script>
+</body>
+</html>
