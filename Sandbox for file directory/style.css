@@ -1,0 +1,13 @@
+.directory {
+    margin-left: 20px;
+}
+
+.file {
+    margin-left: 20px;
+    color: blue;
+    cursor: pointer;
+}
+
+.file:hover {
+    text-decoration: underline;
+}
