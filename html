@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Sharing Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="url"] {
+            width: 80%;
+            padding: 8px;
+            margin-right: 10px;
+        }
+        input[type="submit"] {
+            padding: 8px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Video Sharing Website</h1>
+    <form id="videoForm">
+        <input type="text" id="title" placeholder="Video Title" required>
+        <input type="url" id="url" placeholder="Video URL" required>
+        <input type="submit" value="Add Video">
+    </form>
+    <div id="videoList"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
